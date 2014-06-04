@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import nz.ac.auckland.common.stereotypes.UniversityComponent;
 
+import java.io.IOException;
+
 
 /**
  * This is a static helper utility class for quickly serialising and de-serialising JAXB-mapped structures. Uses a
@@ -17,7 +19,7 @@ import nz.ac.auckland.common.stereotypes.UniversityComponent;
 @UniversityComponent
 public class JacksonHelper implements JacksonHelperApi {
 
-  private static ObjectMapper mapper;
+  static ObjectMapper mapper;
 
   static {
     JsonFactory factory = new JsonFactory();
@@ -61,6 +63,14 @@ public class JacksonHelper implements JacksonHelperApi {
       throw new JacksonException(e);
     }
   }
+
+	public <T> T deserialize(String text, com.fasterxml.jackson.core.type.TypeReference<T> type) throws JacksonException {
+		try {
+			return mapper.reader(type).readValue(text);
+		} catch (IOException e) {
+			throw new JacksonException(e);
+		}
+	}
 
   @Override
   public String jsonSerialize(Object dataToSerialize) throws JacksonException {
